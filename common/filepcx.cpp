@@ -91,8 +91,11 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
 
     CCFileClass file_handle(name);
 
-    if (!file_handle.Is_Available())
+    if (!file_handle.Is_Available()) {
+        printf("[PCX] '%s' not available in MIX/filesystem\n", name);
         return (NULL);
+    }
+    printf("[PCX] '%s' found, loading...\n", name);
 
     file_handle.Open(READ);
 
@@ -106,8 +109,12 @@ GraphicBufferClass* Read_PCX_File(const char* name, char* palette, void* Buff, i
     header.byte_per_line = le16toh(header.byte_per_line);
     header.palette_type = le16toh(header.palette_type);
 
-    if (header.id != 10 && header.version != 5 && header.pixelsize != 8)
+    if (header.id != 10 && header.version != 5 && header.pixelsize != 8) {
+        printf("[PCX] '%s' bad header: id=%d ver=%d bpp=%d\n",
+               name, header.id, header.version, header.pixelsize);
         return NULL;
+    }
+    printf("[PCX] '%s' %dx%d ok\n", name, header.width - header.x + 1, header.height - header.y + 1);
 
     width = header.width - header.x + 1;
     height = header.height - header.y + 1;

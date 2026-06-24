@@ -291,6 +291,12 @@ void SidebarClass::Init_IO(void)
     int oldx;
     PowerClass::Init_IO();
 
+#ifdef ESP32P4_BUILD
+    // No hi-res shape files available — always use text buttons.
+    if (!Repair)  Repair  = new TextButtonClass();
+    if (!Upgrade) Upgrade = new TextButtonClass();
+    if (!Zoom)    Zoom    = new TextButtonClass();
+#else
     if (Get_Resolution_Factor()) {
         if (!Repair)
             Repair = new ShapeButtonClass();
@@ -306,6 +312,7 @@ void SidebarClass::Init_IO(void)
         if (!Zoom)
             Zoom = new TextButtonClass();
     }
+#endif
 
     /*
     ** Add the sidebar's buttons only if we're not in editor mode.
@@ -336,6 +343,30 @@ void SidebarClass::Init_IO(void)
         */
         int buttonspacing = (SideBarWidth - (Repair->Width + Upgrade->Width + Zoom->Width)) / 4;
 
+#ifdef ESP32P4_BUILD
+        {
+            TextButtonClass* TBCRepair  = (TextButtonClass*)Repair;
+            TextButtonClass* TBCUpgrade = (TextButtonClass*)Upgrade;
+            TextButtonClass* TBCZoom    = (TextButtonClass*)Zoom;
+
+            TBCRepair->Set_Text("Repair");
+            TBCRepair->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+            TBCUpgrade->Set_Text("Sell");
+            TBCUpgrade->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+            TBCZoom->Set_Text("Map");
+            TBCZoom->Set_Style(TPF_6POINT | TPF_NOSHADOW | TPF_CENTER);
+
+            Repair->X  = SideX + buttonspacing;
+            Repair->Y  = SideY + 2;
+            Repair->Height = ButtonHeight;
+            Upgrade->X = Repair->X + Repair->Width + buttonspacing;
+            Upgrade->Y = Repair->Y;
+            Upgrade->Height = ButtonHeight;
+            Zoom->X    = Upgrade->X + Upgrade->Width + buttonspacing;
+            Zoom->Y    = Repair->Y;
+            Zoom->Height = ButtonHeight;
+        }
+#else
         if (Get_Resolution_Factor()) {
             ShapeButtonClass* SBCRepair = (ShapeButtonClass*)Repair;
             ShapeButtonClass* SBCUpgrade = (ShapeButtonClass*)Upgrade;
@@ -383,6 +414,7 @@ void SidebarClass::Init_IO(void)
             Zoom->Width = 20;
             Zoom->Height = Upgrade->Height;
         }
+#endif
 
         Repair->IsSticky = true;
         Repair->ID = BUTTON_REPAIR;
@@ -682,6 +714,14 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
 {
     assert((unsigned)type < RTTI_COUNT);
 
+#ifdef ESP32P4_BUILD
+    {
+        static int s_add_log = 0;
+        if (++s_add_log <= 8)
+            printf("[sidebar] Add type=%d id=%d Debug_Map=%d\n", (int)type, id, (int)Debug_Map);
+    }
+#endif
+
     /*
     ** Add the sidebar only if we're not in editor mode.
     */
@@ -692,6 +732,9 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
             Activate(1);
             IsToRedraw = true;
             Flag_To_Redraw(false);
+#ifdef ESP32P4_BUILD
+            printf("[sidebar] Activate(1) called, IsSidebarActive=%d\n", (int)IsSidebarActive);
+#endif
             return (true);
         }
         return (false);
@@ -798,9 +841,17 @@ void SidebarClass::Draw_It(bool complete)
                          BOXSTYLE_RAISED,
                          false);
             } else {
+#ifdef ESP32P4_BUILD
+                // No hi-res shape files in DOS data; fill entire sidebar area.
+                LogicPage->Fill_Rect(SideX, SideY, SideX + SideWidth - 1, SeenBuff.Get_Height() - 1, LTGREY);
+                if (complete) {
+                    LogicPage->Fill_Rect(SideX, SideY, SideX + SideWidth - 1, SideY + TopHeight - 1, DKGREY);
+                }
+#else
                 LogicPage->Draw_Line(SideX, 157, SeenBuff.Get_Width() - 1, 157, 0);
                 CC_Draw_Shape(SidebarShape1, 0, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
                 CC_Draw_Shape(SidebarShape2, 0, SideX, 158 + 118, WINDOW_MAIN, SHAPE_WIN_REL);
+#endif
             }
 
             //  Repair.Draw_Me(true);
@@ -1006,6 +1057,15 @@ bool SidebarClass::Activate(int control)
     //
     if (control < 100) {
         return IsSidebarActive;
+    }
+#endif
+
+#ifdef ESP32P4_BUILD
+    {
+        static int s_act_log = 0;
+        if (++s_act_log <= 5)
+            printf("[sidebar] Activate(%d) old=%d AllowAttract=%d\n",
+                   control, (int)IsSidebarActive, (int)AllowAttract);
     }
 #endif
 

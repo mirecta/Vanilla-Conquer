@@ -469,8 +469,13 @@ void RadarClass::Draw_It(bool forced)
             **	If the radar is not active, then only draw the cover plate if forced to do so.
             */
             //			if (forced) {
+#ifdef ESP32P4_BUILD
+            // No hi-res shape file available; just fill the radar frame with dark grey.
+            LogicPage->Fill_Rect(RadX, RadY, RadX + RadWidth - 1, RadY + RadHeight - 1, DKGREY);
+#else
             int val = (DoesRadarExist) ? MAX_RADAR_FRAMES : 0;
             CC_Draw_Shape(RadarAnim, val, RadX, RadY + 1, WINDOW_MAIN, SHAPE_NORMAL);
+#endif
             FullRedraw = false;
             IsToRedraw = false;
             //			}

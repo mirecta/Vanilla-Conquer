@@ -412,11 +412,15 @@ void AircraftTypeClass::One_Time(void)
         **	Fetch the supporting data files for the unit.
         */
         char buffer[_MAX_FNAME];
+#ifdef ESP32P4_BUILD
+        sprintf(buffer, "%sICON", uclass.IniName);
+#else
         if (Get_Resolution_Factor()) {
             sprintf(buffer, "%sICNH", uclass.IniName);
         } else {
             sprintf(buffer, "%sICON", uclass.IniName);
         }
+#endif
         _makepath(fullname, NULL, NULL, buffer, ".SHP");
         ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
 
@@ -720,7 +724,11 @@ void AircraftTypeClass::Init(TheaterType theater)
 
                 ((void const*&)uclass.CameoData) = NULL;
 
+#ifdef ESP32P4_BUILD
+                sprintf(buffer, "%.4sICON", uclass.IniName);
+#else
                 sprintf(buffer, "%.4sICNH", uclass.IniName);
+#endif
                 _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
                 cameo_ptr = MFCD::Retrieve(fullname);
                 if (cameo_ptr) {

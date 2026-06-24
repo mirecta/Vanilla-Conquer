@@ -602,7 +602,16 @@ template <class T, class TCRC> bool MixFileClass<T, TCRC>::Cache(Buffer const* b
             Data = buffer->Get_Buffer();
         }
     } else {
+#ifdef ESP32P4_BUILD
+        printf("MFCD::Cache '%s' DataSize=%d\n", Filename ? Filename : "?", DataSize);
+        Data = (char*)malloc(DataSize);
+        if (!Data) {
+            printf("MFCD::Cache '%s' skipped - OOM (%d bytes)\n", Filename ? Filename : "?", DataSize);
+            return false;
+        }
+#else
         Data = new char[DataSize];
+#endif
         IsAllocated = true;
     }
 

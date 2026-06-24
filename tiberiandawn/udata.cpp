@@ -1513,11 +1513,15 @@ void UnitTypeClass::One_Time(void)
             /*
             **	Fetch the supporting data files for the unit.
             */
+#ifdef ESP32P4_BUILD
+            sprintf(buffer, "%sICON", uclass.IniName);
+#else
             if (Get_Resolution_Factor()) {
                 sprintf(buffer, "%sICNH", uclass.IniName);
             } else {
                 sprintf(buffer, "%sICON", uclass.IniName);
             }
+#endif
             _makepath(fullname, NULL, NULL, buffer, ".SHP");
             ((void const*&)uclass.CameoData) = MFCD::Retrieve(fullname);
         }
@@ -1588,7 +1592,11 @@ void UnitTypeClass::Init(TheaterType theater)
                 ((void const*&)uclass.CameoData) = NULL;
 
                 if (uclass.IsBuildable) {
+#ifdef ESP32P4_BUILD
+                    sprintf(buffer, "%sICON", uclass.IniName);
+#else
                     sprintf(buffer, "%sICNH", uclass.IniName);
+#endif
                     _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
                     cameo_ptr = MFCD::Retrieve(fullname);
                     if (cameo_ptr) {

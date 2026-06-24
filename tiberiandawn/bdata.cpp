@@ -3824,13 +3824,20 @@ void BuildingTypeClass::One_Time(void)
         **	Fetch the sidebar cameo image for this building.
         */
         if (building.IsBuildable) {
+#ifdef ESP32P4_BUILD
+            sprintf(buffer, "%sICON", building.IniName);
+#else
             if (Get_Resolution_Factor()) {
                 sprintf(buffer, "%sICNH", building.IniName);
             } else {
                 sprintf(buffer, "%sICON", building.IniName);
             }
+#endif
             _makepath(fullname, NULL, NULL, buffer, ".SHP");
             ((void const*&)building.CameoData) = MFCD::Retrieve(fullname);
+#ifdef ESP32P4_BUILD
+            printf("[bdata] %s CameoData=%p\n", fullname, building.CameoData);
+#endif
         }
 
         /*
@@ -4194,7 +4201,11 @@ void BuildingTypeClass::Init(TheaterType theater)
 
                 ((void const*&)classptr->CameoData) = NULL;
 
+#ifdef ESP32P4_BUILD
+                sprintf(buffer, "%.4sICON", classptr->IniName);
+#else
                 sprintf(buffer, "%.4sICNH", classptr->IniName);
+#endif
                 _makepath(fullname, NULL, NULL, buffer, Theaters[theater].Suffix);
                 cameo_ptr = MFCD::Retrieve(fullname);
                 if (cameo_ptr) {

@@ -435,6 +435,10 @@ bool Any_Locked()
  *=============================================================================================*/
 void Memory_Error_Handler(void)
 {
+#ifdef ESP32P4_BUILD
+    printf("FATAL: Memory_Error_Handler — out of memory\n");
+    abort();
+#endif
     GlyphX_Debug_Print("Error - out of memory.");
     VisiblePage.Clear();
     Set_Palette(GamePalette);

@@ -188,12 +188,13 @@ bool Init_Game(int, char*[])
         ** Windows CCLOCAL.MIX
         */
 
+        // Always load LOCAL.MIX (DOS fonts); on high-res also load CCLOCAL.MIX on top.
+        // This ensures fonts are found whether the user has DOS or Windows game data.
+        new MFCD("LOCAL.MIX");
+        MFCD::Cache("LOCAL.MIX");
         if (Get_Resolution_Factor()) {
-            new MFCD("CCLOCAL.MIX"); // Cached.
+            new MFCD("CCLOCAL.MIX");
             MFCD::Cache("CCLOCAL.MIX");
-        } else {
-            new MFCD("LOCAL.MIX"); // Cached.
-            MFCD::Cache("LOCAL.MIX");
         }
         CCDebugString("C&C95 - About to register UPDATE.MIX\n");
         new MFCD("UPDATE.MIX"); // Cached.
@@ -290,6 +291,18 @@ bool Init_Game(int, char*[])
     } else {
         SystemStrings = (char const*)MFCD::Retrieve(Language_Name("CONQUER"));
     }
+#ifdef ESP32P4_BUILD
+    printf("[lang] SystemStrings=%p file=%s\n", (void*)SystemStrings, Language_Name("CONQUER"));
+    if (SystemStrings) {
+        // Print first few text entries to confirm language
+        const char* p = SystemStrings;
+        for (int i = 0; i < 5; i++) {
+            printf("[lang] str[%d]=\"%.40s\"\n", i, p);
+            while (*p) p++;
+            p++;
+        }
+    }
+#endif
 
     /*
     **	Default palette initialization. Uses the desert palette for convenience,

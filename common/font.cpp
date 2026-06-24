@@ -133,6 +133,8 @@ void* Set_Font(void const* fontptr)
  *=========================================================================*/
 int Char_Pixel_Width(char chr)
 {
+    if (!FontWidthBlockPtr)
+        return 8;
     int width = (unsigned char)*(FontWidthBlockPtr + (unsigned char)chr) + FontXSpacing;
 
     return (width);

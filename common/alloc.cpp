@@ -42,6 +42,13 @@
 
 #include "wwmem.h"
 
+#ifdef ESP32P4_BUILD
+extern "C" {
+    unsigned int heap_caps_get_free_size(unsigned int caps);
+    unsigned int heap_caps_get_largest_free_block(unsigned int caps);
+}
+#endif
+
 size_t Largest_Mem_Block(void);
 
 /*=========================================================================*/
@@ -97,7 +104,23 @@ void* Alloc(size_t bytes_to_alloc, MemoryFlagType flags)
 
     mem_ptr = malloc(bytes_to_alloc);
 
+#ifdef ESP32P4_BUILD
+    if (bytes_to_alloc >= 512 * 1024) {
+        printf("Alloc(%u) -> %s, PSRAM_free=%u\n",
+               (unsigned)bytes_to_alloc,
+               mem_ptr ? "OK" : "FAIL",
+               heap_caps_get_free_size(8));
+    }
+#endif
+
     if (!mem_ptr && Memory_Error) {
+#ifdef ESP32P4_BUILD
+        // MALLOC_CAP_SPIRAM = 1<<3 = 8
+        printf("OOM: malloc(%u) failed. PSRAM free=%u largest=%u\n",
+               (unsigned)bytes_to_alloc,
+               heap_caps_get_free_size(8),
+               heap_caps_get_largest_free_block(8));
+#endif
         Memory_Error();
     }
 

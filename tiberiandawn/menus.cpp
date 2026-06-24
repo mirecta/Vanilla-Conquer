@@ -800,6 +800,7 @@ int Main_Menu(unsigned int timeout)
             **	Load the background picture.
             */
             Load_Title_Screen(TitlePicture, &HidPage, Palette);
+            Set_Palette(Palette);
             Blit_Hid_Page_To_Seen_Buff();
 
             /*

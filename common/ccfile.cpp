@@ -111,6 +111,8 @@ CCFileClass::CCFileClass(void)
  *=============================================================================================*/
 void CCFileClass::Error(int error, int canretry, char const* filename)
 {
+#ifndef ESP32P4_BUILD
+    // On ESP32 there is no CD; skip this check and let the caller handle missing files.
     if (!Force_CD_Available(RequiredCD)) {
         Prog_End("CCFileClass::Error CD not found", true);
         if (!RunningAsDLL) { // PG
@@ -118,6 +120,7 @@ void CCFileClass::Error(int error, int canretry, char const* filename)
             exit(EXIT_FAILURE);
         }
     }
+#endif
 
     // If its not a required CD releated error, pass to next class handling in the chain.
     CDFileClass::Error(error, canretry, filename);

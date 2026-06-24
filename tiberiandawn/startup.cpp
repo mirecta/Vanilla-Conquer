@@ -55,6 +55,10 @@ HINSTANCE ProgramInstance;
 extern int ReadyToQuit;
 void Read_Setup_Options(RawFileClass* config_file);
 
+#ifdef ESP32P4_BUILD
+extern "C" void Set_Video_Mouse_Bounds(int w, int h);
+#endif
+
 bool VideoBackBufferAllowed = true;
 void Check_From_WChat(char* wchat_name);
 bool ProgEndCalled = false;
@@ -200,6 +204,8 @@ int DLL_Startup(const char* command_line_in)
 
 int main(int argc, char** argv)
 {
+    printf("[cnc] main() entered argc=%d argv[0]=%s\n", argc, argc > 0 ? argv[0] : "(null)");
+    fflush(stdout);
     UtfArgs args(argc, argv);
     CCDebugString("C&C95 - Starting up.\n");
 
@@ -208,7 +214,7 @@ int main(int argc, char** argv)
         printf("Zuwenig Hauptspeicher verf?gbar.\n");
 #else
 #ifdef FRENCH
-        printf("M�moire vive (RAM) insuffisante.\n");
+        printf("M�moire vive (RAM) insuffisante.\n");
 #else
         printf("Insufficient RAM available.\n");
 #endif
@@ -295,6 +301,14 @@ int main(int argc, char** argv)
             ScreenWidth = 320;
             ScreenHeight = 200;
         }
+#ifdef ESP32P4_BUILD
+        /* Force 640×400 regardless of game file format — display pipeline expects it. */
+        printf("[cnc] ScreenWidth before override: %d  Is_DOS_Files=%d\n",
+               ScreenWidth, (int)Is_DOS_Files());
+        ScreenWidth  = 640;
+        ScreenHeight = 400;
+        printf("[cnc] Forced 640x400 mode\n");
+#endif
 #endif
 
 #if defined(_WIN32) && !defined(SDL_BUILD)
@@ -400,6 +414,11 @@ int main(int argc, char** argv)
 
         SeenBuff.Attach(&VisiblePage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
         HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
+#ifdef ESP32P4_BUILD
+        Set_Video_Mouse_Bounds(ScreenWidth, ScreenHeight);
+        printf("[cnc] SeenBuff %dx%d mouse bounds %dx%d\n",
+               SeenBuff.Get_Width(), SeenBuff.Get_Height(), ScreenWidth, ScreenHeight);
+#endif
 
         CCDebugString("C&C95 - Adjusting variables for resolution.\n");
         Options.Adjust_Variables_For_Resolution();
@@ -537,7 +556,13 @@ void Prog_End(const char* why, bool fatal) // Added why and fatal parameters. ST
         GlyphX_Debug_Print(why);
     }
     if (fatal) {
+#ifdef ESP32P4_BUILD
+        // NULL write crashes the core on RISC-V with no debugger attached.
+        // Use abort() instead so the IDF panic handler prints a proper backtrace.
+        abort();
+#else
         *((int*)0) = 0;
+#endif
     }
 
 #ifndef DEMO

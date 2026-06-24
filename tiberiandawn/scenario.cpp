@@ -251,6 +251,19 @@ bool Read_Scenario(char* root)
 
         Fill_In_Data();
 
+#ifdef ESP32P4_BUILD
+        // Ensure sidebar is always shown after scenario loads (may not have been
+        // activated if no buildables exist yet or Can_Build returned false for all items).
+        if (!Map.IsSidebarActive) {
+            Map.Activate(0);
+            Map.Activate(1);
+            printf("[sidebar] forced Activate(1) after Fill_In_Data\n");
+        }
+        // Remove fog of war so unit movement is clearly visible during testing.
+        Debug_Unshroud = true;
+        Map.Flag_To_Redraw(true);
+#endif
+
         //        Map.Set_View_Dimensions(0, Map.Get_Tab_Height(), Map.MapCellWidth, Map.MapCellHeight);
 
         /*
