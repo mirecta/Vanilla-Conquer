@@ -286,12 +286,18 @@ bool Init_Game(int, char*[])
     **	Fetch the language text from the hard drive first. If it cannot be
     **	found on the hard drive, then look for it in the mixfile.
     */
+#ifdef ESP32P4_BUILD
+    if (RawFileClass("/sdcard/CONQUER.ENG").Is_Available()) {
+        SystemStrings = (char const*)Load_Alloc_Data(RawFileClass("/sdcard/CONQUER.ENG"));
+    } else {
+#endif
     if (RawFileClass(Language_Name("CONQUER")).Is_Available()) {
         SystemStrings = (char const*)Load_Alloc_Data(CCFileClass(Language_Name("CONQUER")));
     } else {
         SystemStrings = (char const*)MFCD::Retrieve(Language_Name("CONQUER"));
     }
 #ifdef ESP32P4_BUILD
+    }
     printf("[lang] SystemStrings=%p file=%s\n", (void*)SystemStrings, Language_Name("CONQUER"));
     if (SystemStrings) {
         // Print first few text entries to confirm language
