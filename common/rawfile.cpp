@@ -342,9 +342,6 @@ int RawFileClass::Is_Available(int forced)
     **	condition, go through the normal error recover channels.
     */
     Handle = raw_fopen(Filename, "r");
-#ifdef ESP32P4_BUILD
-    printf("[file] Is_Available('%s') = %s\n", Filename, Handle ? "YES" : "NO");
-#endif
     if (Handle == nullptr) {
         return (false);
     }
