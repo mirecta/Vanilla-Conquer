@@ -1910,6 +1910,11 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                             break;
                         }
                         shapefile = obj->Get_Cameo_Data();
+#ifdef ESP32P4_BUILD
+                        if (!shapefile) {
+                            shapefile = obj->Get_Image_Data(); // fallback to gameplay shape
+                        }
+#endif
                         shapenum = 0;
                         if (Buildables[index].Factory != -1) {
                             factory = Factories.Raw_Ptr(Buildables[index].Factory);
@@ -1987,18 +1992,11 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             **
             ** Don't draw blank shapes over the new 640x400 sidebar art - ST 5/1/96 6:01PM
             */
-            if (factor == 0 || shapenum != SB_BLANK || shapefile != LogoShapes) {
 #ifdef ESP32P4_BUILD
-                static int _sidelog = 0;
-                if (_sidelog < 8) {
-                    printf("[sidedraw] i=%d shapefile=%p shapenum=%d x=%d y=%d winX=%d winY=%d LEO=%d\n",
-                           i, shapefile, shapenum,
-                           x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
-                           y - WindowList[WINDOW_SIDEBAR][WINDOWY],
-                           WindowList[WINDOW_SIDEBAR][WINDOWX], WindowList[WINDOW_SIDEBAR][WINDOWY],
-                           LeftEdgeOffset);
-                    _sidelog++;
-                }
+            // DOS data has no ICON/STRIP shapes; draw whenever we have actual shape data
+            if (shapefile != nullptr) {
+#else
+            if (factor == 0 || shapenum != SB_BLANK || shapefile != LogoShapes) {
 #endif
 #ifdef ESP32P4_BUILD
                 IsTheaterShape = false; // DOS cameo icons are not theater-specific
