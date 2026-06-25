@@ -3825,7 +3825,7 @@ void BuildingTypeClass::One_Time(void)
         */
         if (building.IsBuildable) {
 #ifdef ESP32P4_BUILD
-            sprintf(buffer, "%sICON", building.IniName);
+            sprintf(buffer, "%sICNH", building.IniName);
 #else
             if (Get_Resolution_Factor()) {
                 sprintf(buffer, "%sICNH", building.IniName);

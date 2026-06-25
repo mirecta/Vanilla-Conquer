@@ -1910,11 +1910,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                             break;
                         }
                         shapefile = obj->Get_Cameo_Data();
-#ifdef ESP32P4_BUILD
-                        if (!shapefile) {
-                            shapefile = obj->Get_Image_Data(); // fallback to gameplay shape
-                        }
-#endif
                         shapenum = 0;
                         if (Buildables[index].Factory != -1) {
                             factory = Factories.Raw_Ptr(Buildables[index].Factory);
