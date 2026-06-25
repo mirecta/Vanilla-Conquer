@@ -1830,9 +1830,11 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         /*
         ** New sidebar needs to be drawn not filled
         */
+#ifndef ESP32P4_BUILD
         if (factor > 0 && BuildableCount < MAX_VISIBLE) {
             CC_Draw_Shape(LogoShapes, ID, X + 3, Y - 1, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
+#endif
 
         /*
         **	Redraw the scroll buttons.
