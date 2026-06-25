@@ -1988,8 +1988,8 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             ** Don't draw blank shapes over the new 640x400 sidebar art - ST 5/1/96 6:01PM
             */
 #ifdef ESP32P4_BUILD
-            // DOS data has no ICON/STRIP shapes; draw whenever we have actual shape data
-            if (shapefile != nullptr) {
+            // DOS STRIP.SHP is 32x24 (half hi-res slot); skip blank slots to avoid quarter-size rect
+            if (shapefile != nullptr && shapefile != LogoShapes) {
 #else
             if (factor == 0 || shapenum != SB_BLANK || shapefile != LogoShapes) {
 #endif
@@ -2012,6 +2012,17 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 **	unavailable.
                 */
                 if (darken) {
+#ifdef ESP32P4_BUILD
+                    // ClockShapes is DOS-sized (32x24); ghost the full-size icon instead
+                    CC_Draw_Shape(shapefile,
+                                  shapenum,
+                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
+                                  y - WindowList[WINDOW_SIDEBAR][WINDOWY],
+                                  WINDOW_SIDEBAR,
+                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
+                                  NULL,
+                                  ClockTranslucentTable);
+#else
                     CC_Draw_Shape(ClockShapes,
                                   0,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
@@ -2020,6 +2031,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
                                   NULL,
                                   ClockTranslucentTable);
+#endif
                 }
             }
 
@@ -2043,6 +2055,17 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     //					Fancy_Text_Print(TXT_READY, x+TEXT_X_OFFSET, y+TEXT_Y_OFFSET, TEXT_COLOR, TBLACK,
                     //TPF_6POINT|TPF_CENTER|TPF_NOSHADOW);
                 } else {
+#ifdef ESP32P4_BUILD
+                    // ClockShapes is DOS-sized (32x24); ghost the full-size icon to show progress
+                    CC_Draw_Shape(shapefile,
+                                  shapenum,
+                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
+                                  y - WindowList[WINDOW_SIDEBAR][WINDOWY],
+                                  WINDOW_SIDEBAR,
+                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
+                                  NULL,
+                                  ClockTranslucentTable);
+#else
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
@@ -2051,6 +2074,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
                                   NULL,
                                   ClockTranslucentTable);
+#endif
 
                     /*
                     **	Display text showing that the construction is temporarily on hold.
