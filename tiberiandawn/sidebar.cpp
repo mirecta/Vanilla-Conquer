@@ -2015,15 +2015,14 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 */
                 if (darken) {
 #ifdef ESP32P4_BUILD
-                    // ClockShapes is DOS-sized (32x24); ghost the full-size icon instead
+                    // ClockTranslucentTable not loaded; darken by re-drawing icon with FadingShade
                     CC_Draw_Shape(shapefile,
                                   shapenum,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
                                   y - WindowList[WINDOW_SIDEBAR][WINDOWY],
                                   WINDOW_SIDEBAR,
-                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
-                                  NULL,
-                                  ClockTranslucentTable);
+                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_FADING,
+                                  Map.FadingShade);
 #else
                     CC_Draw_Shape(ClockShapes,
                                   0,
@@ -2058,15 +2057,14 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     //TPF_6POINT|TPF_CENTER|TPF_NOSHADOW);
                 } else {
 #ifdef ESP32P4_BUILD
-                    // ClockShapes is DOS-sized (32x24); ghost the full-size icon to show progress
+                    // No ClockTranslucentTable; shade the icon to indicate building in progress
                     CC_Draw_Shape(shapefile,
                                   shapenum,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
                                   y - WindowList[WINDOW_SIDEBAR][WINDOWY],
                                   WINDOW_SIDEBAR,
-                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
-                                  NULL,
-                                  ClockTranslucentTable);
+                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_FADING,
+                                  Map.FadingShade);
 #else
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
