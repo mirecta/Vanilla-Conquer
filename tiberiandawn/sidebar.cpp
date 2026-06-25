@@ -843,17 +843,9 @@ void SidebarClass::Draw_It(bool complete)
                          BOXSTYLE_RAISED,
                          false);
             } else {
-#ifdef ESP32P4_BUILD
-                // No hi-res shape files in DOS data; fill entire sidebar area.
-                LogicPage->Fill_Rect(SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SeenBuff.Get_Height() - 1, LTGREY);
-                if (complete) {
-                    LogicPage->Fill_Rect(SideX + Map.PowWidth, SideY, SideX + SideWidth - 1, SideY + TopHeight - 1, DKGREY);
-                }
-#else
                 LogicPage->Draw_Line(SideX, 157, SeenBuff.Get_Width() - 1, 157, 0);
                 CC_Draw_Shape(SidebarShape1, 0, SideX, 158, WINDOW_MAIN, SHAPE_WIN_REL);
                 CC_Draw_Shape(SidebarShape2, 0, SideX, 158 + 118, WINDOW_MAIN, SHAPE_WIN_REL);
-#endif
             }
 
             //  Repair.Draw_Me(true);
