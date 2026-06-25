@@ -3919,16 +3919,11 @@ void const* Hires_Retrieve(const char* name)
 {
     char filename[30];
 
-#ifdef ESP32P4_BUILD
-    // Freeware DOS data has no H-prefix hi-res variants; use filenames as-is.
-    strcpy(filename, name);
-#else
     if (SeenBuff.Get_Width() != 320) {
         sprintf(filename, "H%s", name);
     } else {
         strcpy(filename, name);
     }
-#endif
     return (MFCD::Retrieve(filename));
 }
 int Get_Resolution_Factor(void)

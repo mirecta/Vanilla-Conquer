@@ -81,7 +81,9 @@
 **	Define "_RETRIEVE" if the palette morphing tables are part of the loaded data. If this
 **	is undefined, then the files will be created.
 */
+#ifndef ESP32P4_BUILD
 #define _RETRIEVE
+#endif
 
 /***************************************************************************
 **	This holds the translucent table for use with the construction clock
@@ -2014,16 +2016,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                 **	unavailable.
                 */
                 if (darken) {
-#ifdef ESP32P4_BUILD
-                    // ClockTranslucentTable not loaded; darken by re-drawing icon with FadingShade
-                    CC_Draw_Shape(shapefile,
-                                  shapenum,
-                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
-                                  y - WindowList[WINDOW_SIDEBAR][WINDOWY],
-                                  WINDOW_SIDEBAR,
-                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_FADING,
-                                  Map.FadingShade);
-#else
                     CC_Draw_Shape(ClockShapes,
                                   0,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
@@ -2032,7 +2024,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
                                   NULL,
                                   ClockTranslucentTable);
-#endif
                 }
             }
 
@@ -2056,16 +2047,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                     //					Fancy_Text_Print(TXT_READY, x+TEXT_X_OFFSET, y+TEXT_Y_OFFSET, TEXT_COLOR, TBLACK,
                     //TPF_6POINT|TPF_CENTER|TPF_NOSHADOW);
                 } else {
-#ifdef ESP32P4_BUILD
-                    // No ClockTranslucentTable; shade the icon to indicate building in progress
-                    CC_Draw_Shape(shapefile,
-                                  shapenum,
-                                  x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
-                                  y - WindowList[WINDOW_SIDEBAR][WINDOWY],
-                                  WINDOW_SIDEBAR,
-                                  SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_FADING,
-                                  Map.FadingShade);
-#else
                     CC_Draw_Shape(ClockShapes,
                                   stage + 1,
                                   x - WindowList[WINDOW_SIDEBAR][WINDOWX] + LeftEdgeOffset,
@@ -2074,7 +2055,6 @@ void SidebarClass::StripClass::Draw_It(bool complete)
                                   SHAPE_NORMAL | SHAPE_WIN_REL | SHAPE_GHOST,
                                   NULL,
                                   ClockTranslucentTable);
-#endif
 
                     /*
                     **	Display text showing that the construction is temporarily on hold.
