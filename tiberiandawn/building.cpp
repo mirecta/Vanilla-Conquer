@@ -2426,25 +2426,11 @@ void BuildingClass::Update_Buildables(void)
     */
     if (House != PlayerPtr) {
         if (GameToPlay != GAME_GLYPHX_MULTIPLAYER || House->IsHuman == false) {
-#ifdef ESP32P4_BUILD
-            static int s_skip_log = 0;
-            if (++s_skip_log <= 5)
-                printf("[sidebar] Update_Buildables skip: House=%p PlayerPtr=%p\n", (void*)House, (void*)PlayerPtr);
-#endif
             return;
         }
     }
 
     bool buildable_via_capture = (IsCaptured && ActLike != House->ActLike) ? true : false;
-
-#ifdef ESP32P4_BUILD
-    {
-        static int s_upd_log = 0;
-        if (++s_upd_log <= 8)
-            printf("[sidebar] Update_Buildables ToBuild=%d IsInLimbo=%d Discovered=%d\n",
-                   (int)Class->ToBuild, (int)IsInLimbo, (int)Is_Discovered_By_Player());
-    }
-#endif
 
     if (!IsInLimbo && Is_Discovered_By_Player()) {
         switch (Class->ToBuild) {

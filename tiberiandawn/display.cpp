@@ -1563,14 +1563,6 @@ bool DisplayClass::Scroll_Map(DirType facing, int& distance, bool really)
     **	If the new coordinate is the same as the old, then no scrolling would occur.
     */
     if (!distance || coord == TacticalCoord) {
-#ifdef ESP32P4_BUILD
-        static int scroll_fail_count = 0;
-        if (++scroll_fail_count <= 5) {
-            printf("[scroll] FAIL dir=%d MapCell=(%d,%d) %dx%d TacW=%d TacH=%d TacCoord=%08X\n",
-                   (int)facing, MapCellX, MapCellY, MapCellWidth, MapCellHeight,
-                   TacLeptonWidth, TacLeptonHeight, (unsigned)TacticalCoord);
-        }
-#endif
         return (false);
     }
 
@@ -1579,14 +1571,6 @@ bool DisplayClass::Scroll_Map(DirType facing, int& distance, bool really)
     **	tactical map accordingly.
     */
     if (really) {
-#ifdef ESP32P4_BUILD
-        static int scroll_ok_count = 0;
-        if (++scroll_ok_count <= 3) {
-            printf("[scroll] OK dir=%d MapCell=(%d,%d) %dx%d TacCoord %08X->%08X\n",
-                   (int)facing, MapCellX, MapCellY, MapCellWidth, MapCellHeight,
-                   (unsigned)TacticalCoord, (unsigned)coord);
-        }
-#endif
         Set_Tactical_Position(coord);
         IsToRedraw = true;
         Flag_To_Redraw(false);
@@ -3260,17 +3244,6 @@ int DisplayClass::TacticalClass::Action(unsigned flags, KeyNumType& key)
     CELL cell = Coord_Cell(coord);
     //	CELL cell = Map.Click_Cell_Calc(x, y);
 
-#ifdef ESP32P4_BUILD
-    if (flags & (LEFTPRESS | LEFTRELEASE)) {
-        static int s_action_log = 0;
-        if (++s_action_log <= 30)
-            printf("[action] flags=%02X px=%d py=%d coord=0x%08X cellX=%d cellY=%d TacCoord=0x%08X\n",
-                   flags & 0xFF, x, y, (unsigned)coord,
-                   (int)Coord_XCell(coord), (int)Coord_YCell(coord),
-                   (unsigned)Map.TacticalCoord);
-    }
-#endif
-
     if (coord) {
         shadow = (!Map[cell].Is_Visible(PlayerPtr)
                   && !Debug_Unshroud); // Use PlayerPtr since we won't be rendering in MP. ST - 3/6/2019 2:49PM
@@ -3534,18 +3507,6 @@ int DisplayClass::TacticalClass::Command_Object(unsigned flags, KeyNumType& key)
     }
     COORDINATE coord = Map.Pixel_To_Coord(x, y);
     CELL cell = Coord_Cell(coord);
-
-#ifdef ESP32P4_BUILD
-    if (flags & LEFTPRESS) {
-        static int s_click_log = 0;
-        if (++s_click_log <= 20)
-            printf("[click] px=%d py=%d coord=0x%08X cell=%d cellX=%d cellY=%d TacX=%d TacY=%d TacCoord=0x%08X\n",
-                   x, y, (unsigned)coord, (int)cell,
-                   (int)Coord_XCell(coord), (int)Coord_YCell(coord),
-                   (int)Map.TacPixelX, (int)Map.TacPixelY,
-                   (unsigned)Map.TacticalCoord);
-    }
-#endif
 
     ActionType action = ACTION_NONE;
 

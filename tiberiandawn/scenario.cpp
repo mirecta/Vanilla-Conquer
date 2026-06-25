@@ -257,7 +257,6 @@ bool Read_Scenario(char* root)
         if (!Map.IsSidebarActive) {
             Map.Activate(0);
             Map.Activate(1);
-            printf("[sidebar] forced Activate(1) after Fill_In_Data\n");
         }
         // Remove fog of war so unit movement is clearly visible during testing.
         Debug_Unshroud = true;

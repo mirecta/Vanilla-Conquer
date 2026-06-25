@@ -716,14 +716,6 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
 {
     assert((unsigned)type < RTTI_COUNT);
 
-#ifdef ESP32P4_BUILD
-    {
-        static int s_add_log = 0;
-        if (++s_add_log <= 8)
-            printf("[sidebar] Add type=%d id=%d Debug_Map=%d\n", (int)type, id, (int)Debug_Map);
-    }
-#endif
-
     /*
     ** Add the sidebar only if we're not in editor mode.
     */
@@ -734,9 +726,6 @@ bool SidebarClass::Add(RTTIType type, int id, bool via_capture)
             Activate(1);
             IsToRedraw = true;
             Flag_To_Redraw(false);
-#ifdef ESP32P4_BUILD
-            printf("[sidebar] Activate(1) called, IsSidebarActive=%d\n", (int)IsSidebarActive);
-#endif
             return (true);
         }
         return (false);
@@ -1051,15 +1040,6 @@ bool SidebarClass::Activate(int control)
     //
     if (control < 100) {
         return IsSidebarActive;
-    }
-#endif
-
-#ifdef ESP32P4_BUILD
-    {
-        static int s_act_log = 0;
-        if (++s_act_log <= 5)
-            printf("[sidebar] Activate(%d) old=%d AllowAttract=%d\n",
-                   control, (int)IsSidebarActive, (int)AllowAttract);
     }
 #endif
 

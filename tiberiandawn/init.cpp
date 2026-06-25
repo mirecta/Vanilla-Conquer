@@ -291,18 +291,6 @@ bool Init_Game(int, char*[])
     } else {
         SystemStrings = (char const*)MFCD::Retrieve(Language_Name("CONQUER"));
     }
-#ifdef ESP32P4_BUILD
-    printf("[lang] SystemStrings=%p file=%s\n", (void*)SystemStrings, Language_Name("CONQUER"));
-    if (SystemStrings) {
-        // Print first few text entries to confirm language
-        const char* p = SystemStrings;
-        for (int i = 0; i < 5; i++) {
-            printf("[lang] str[%d]=\"%.40s\"\n", i, p);
-            while (*p) p++;
-            p++;
-        }
-    }
-#endif
 
     /*
     **	Default palette initialization. Uses the desert palette for convenience,

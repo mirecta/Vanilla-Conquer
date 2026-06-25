@@ -120,15 +120,6 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
                 if (y == 0 || x == 0 || x == (SeenBuff.Get_Width() - 1) || y == (SeenBuff.Get_Height() - 1)) {
 
                     player_scrolled = true;
-#ifdef ESP32P4_BUILD
-                    {
-                        static int s_scroll_log = 0;
-                        if (++s_scroll_log <= 12) {
-                            printf("[scroll] edge x=%d y=%d SeenW=%d SeenH=%d\n",
-                                   x, y, SeenBuff.Get_Width(), SeenBuff.Get_Height());
-                        }
-                    }
-#endif
                     /*
 					**	Adjust the mouse coordinates to emphasise the
 					**	cardinal directions over the diagonals.
@@ -154,16 +145,6 @@ void ScrollClass::AI(KeyNumType& input, int x, int y)
 
                     direction =
                         (DirType)Desired_Facing256((SeenBuff.Get_Width()) / 2, (SeenBuff.Get_Height()) / 2, altx, alty);
-#ifdef ESP32P4_BUILD
-                    {
-                        static int s_dir_log = 0;
-                        if (s_dir_log < 12) {
-                            s_dir_log++;
-                            printf("[scroll] altx=%d alty=%d dir=%d facing=%d\n",
-                                   altx, alty, (int)direction, (int)Dir_Facing(direction));
-                        }
-                    }
-#endif
                 }
                 int control = Dir_Facing(direction);
 

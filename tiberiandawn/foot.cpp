@@ -1323,15 +1323,6 @@ void FootClass::Active_Click_With(ActionType action, CELL cell)
     case ACTION_MOVE:
         if (AllowVoice) {
             COORDINATE animcoord = Map.Pixel_To_Coord(Get_Mouse_X(), Get_Mouse_Y());
-#ifdef ESP32P4_BUILD
-            {
-                static int s_anim_log = 0;
-                if (++s_anim_log <= 20)
-                    printf("[anim] flash at cellX=%d cellY=%d (mouseXY=%d,%d)\n",
-                           (int)Coord_XCell(animcoord), (int)Coord_YCell(animcoord),
-                           (int)Get_Mouse_X(), (int)Get_Mouse_Y());
-            }
-#endif
             OutList.Add(EventClass(ANIM_MOVE_FLASH, PlayerPtr->Class->House, animcoord, 1 << PlayerPtr->Class->House));
         }
         // Fall into next case.
@@ -1339,16 +1330,6 @@ void FootClass::Active_Click_With(ActionType action, CELL cell)
     case ACTION_NOMOVE:
         // using function for IsVisible so we have different results for different players - JAS 2019/09/30
         if (What_Am_I() != RTTI_AIRCRAFT || Map[cell].Is_Visible(PlayerPtr)) {
-#ifdef ESP32P4_BUILD
-            {
-                static int s_move_log = 0;
-                COORDINATE mycoord = Center_Coord();
-                if (++s_move_log <= 20)
-                    printf("[move] unit @ cell=%d(%d,%d) → target cell=%d(%d,%d)\n",
-                           (int)Coord_Cell(mycoord), (int)Coord_XCell(mycoord), (int)Coord_YCell(mycoord),
-                           (int)cell, (int)Cell_X(cell), (int)Cell_Y(cell));
-            }
-#endif
             Player_Assign_Mission(MISSION_MOVE, TARGET_NONE, ::As_Target(cell));
         }
         break;

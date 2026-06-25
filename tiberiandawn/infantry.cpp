@@ -1347,16 +1347,6 @@ void InfantryClass::AI(void)
                         return;
                     }
                     if (!Basic_Path()) {
-#ifdef ESP32P4_BUILD
-                        {
-                            static int s_nopath = 0;
-                            if (++s_nopath <= 10)
-                                printf("[path] FAIL unit@(%d,%d) nav@%08X dist=%d\n",
-                                       (int)Cell_X(Coord_Cell(Center_Coord())),
-                                       (int)Cell_Y(Coord_Cell(Center_Coord())),
-                                       (unsigned)NavCom, (int)Distance(NavCom));
-                        }
-#endif
                         // Mono_Printf("Infantry Basic_Path is failing.\n");Get_Key();
                         if (Distance(NavCom) < 0x0280 && !IsTethered) {
                             Assign_Destination(TARGET_NONE);

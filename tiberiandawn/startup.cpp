@@ -204,8 +204,6 @@ int DLL_Startup(const char* command_line_in)
 
 int main(int argc, char** argv)
 {
-    printf("[cnc] main() entered argc=%d argv[0]=%s\n", argc, argc > 0 ? argv[0] : "(null)");
-    fflush(stdout);
     UtfArgs args(argc, argv);
     CCDebugString("C&C95 - Starting up.\n");
 
@@ -303,11 +301,8 @@ int main(int argc, char** argv)
         }
 #ifdef ESP32P4_BUILD
         /* Force 640×400 regardless of game file format — display pipeline expects it. */
-        printf("[cnc] ScreenWidth before override: %d  Is_DOS_Files=%d\n",
-               ScreenWidth, (int)Is_DOS_Files());
         ScreenWidth  = 640;
         ScreenHeight = 400;
-        printf("[cnc] Forced 640x400 mode\n");
 #endif
 #endif
 
@@ -416,8 +411,6 @@ int main(int argc, char** argv)
         HidPage.Attach(&HiddenPage, 0, 0, GBUFF_INIT_WIDTH, GBUFF_INIT_HEIGHT);
 #ifdef ESP32P4_BUILD
         Set_Video_Mouse_Bounds(ScreenWidth, ScreenHeight);
-        printf("[cnc] SeenBuff %dx%d mouse bounds %dx%d\n",
-               SeenBuff.Get_Width(), SeenBuff.Get_Height(), ScreenWidth, ScreenHeight);
 #endif
 
         CCDebugString("C&C95 - Adjusting variables for resolution.\n");
