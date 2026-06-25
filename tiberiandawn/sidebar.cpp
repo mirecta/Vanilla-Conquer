@@ -1832,11 +1832,9 @@ void SidebarClass::StripClass::Draw_It(bool complete)
         /*
         ** New sidebar needs to be drawn not filled
         */
-#ifndef ESP32P4_BUILD
         if (factor > 0 && BuildableCount < MAX_VISIBLE) {
             CC_Draw_Shape(LogoShapes, ID, X + 3, Y - 1, WINDOW_MAIN, SHAPE_WIN_REL | SHAPE_NORMAL, 0);
         }
-#endif
 
         /*
         **	Redraw the scroll buttons.
@@ -1991,12 +1989,7 @@ void SidebarClass::StripClass::Draw_It(bool complete)
             **
             ** Don't draw blank shapes over the new 640x400 sidebar art - ST 5/1/96 6:01PM
             */
-#ifdef ESP32P4_BUILD
-            // DOS STRIP.SHP is 32x24 (half hi-res slot); skip blank slots to avoid quarter-size rect
-            if (shapefile != nullptr && shapefile != LogoShapes) {
-#else
             if (factor == 0 || shapenum != SB_BLANK || shapefile != LogoShapes) {
-#endif
 #ifdef ESP32P4_BUILD
                 IsTheaterShape = false; // DOS cameo icons are not theater-specific
 #else
